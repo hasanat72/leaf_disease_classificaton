@@ -33,8 +33,8 @@ def predict(image):
     output_data = interpreter.get_tensor(output_details[0]['index'])
     predicted_class = class_names[np.argmax(output_data)]
     confidence = np.max(output_data)
-    
-    return predicted_class, confidence
+
+    return predicted_class, confidence, output_data[0]
 
 # Streamlit app
 st.title("Potato Disease Classification")
@@ -46,8 +46,12 @@ if uploaded_file is not None:
     st.image(image, caption='Uploaded Image.', use_column_width=True)
     st.write("")
     st.write("Classifying...")
-    
-    predicted_class, confidence = predict(image)
-    
+
+    predicted_class, confidence, all_scores = predict(image)
+
     st.write(f"Prediction: {predicted_class}")
     st.write(f"Confidence: {confidence:.2f}")
+
+    st.write("Confidence scores for all classes:")
+    for i, score in enumerate(all_scores):
+        st.write(f"- {class_names[i]}: {score:.2f}")
